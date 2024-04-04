@@ -1,0 +1,32 @@
+.text
+
+	li $t0, 35
+	li $t1, 7
+	
+	div $t0, $t1
+	# estamos dividinto t0 por t1
+	#o resultado dessa operação vai para os registradores lo e hi
+	#lo é o resultado da divisão, e hi é o resto
+	#para mover o resultado da divisão para outro registrador, usaremos "mflo"
+	#para mover o resto da divisão para outro registrador, usaremos "mfhi"
+	
+	mflo $s0
+	mfhi $s1
+	
+	#print lo
+	li $v0, 1
+	move $a0, $s0
+	syscall
+	
+	#print hi
+	li $v0, 1
+	move $a0, $s1
+	syscall
+	
+	#assim como na multiplicação podemos mover bits para esquerda afim de fazer multiplicações por 2, 
+	#na divisão podemos mover bits à direita para fazer divisões por 2
+	
+	li $t2, 128
+	srl $s2, $t2, 1 #dividindo por 2^1 = 2
+	
+	srl $s3, $t2, 2 #dividindo por 2^2 = 4

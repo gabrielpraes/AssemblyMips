@@ -1,0 +1,33 @@
+#Double - podemos usar apenas registradores F de número PAR
+#ler e imprimir Double
+.data
+	mensagem: .asciiz "Digite um numero decimal: "
+	saida: .asciiz "O nimero digitado foi "
+	zero: .double 0.0
+
+.text
+	#imprimindo mensagem
+	li $v0, 4
+	la $a0, mensagem
+	syscall
+	
+	#ler double
+	li $v0, 7
+	syscall
+	#o valor irá para $f0
+	#para imprimir um double, precisamos de mover ele para f12
+	#porem, para mover para f12, precisamos fazer uma operação de soma com zero
+	
+	
+	ldc1 $f2, zero
+	add.d $f12, $f2, $f0
+	
+	#imprimindo saida
+	li $v0, 4
+	la $a0, saida
+	syscall
+	
+	#imprimir float
+	li $v0, 3
+	syscall
+	

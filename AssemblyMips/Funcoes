@@ -1,0 +1,72 @@
+#Existe um operador chamado "jump and link" (jal)
+#Esse oerador serve para que possamos chamar funções e, quando elas chegarem ao fim, podermos voltar para o ponto onde foi chamado a função
+#Devemos colocar um código na função "jr $ra", que significa "volte para onde fui chamado"
+
+#Para passagem de argumentos, temos os registradores $a0 até $a3, caso precise de mais parâmetros, precisaremos pegar os valores da memoria RAM.
+#Podemos retornar valores tanto no $v0, quanto no $v1
+
+.data
+	msg1: .asciiz "Bom dia a todos!\n"
+	msg2: .asciiz "Meu nome é Gabriel\n"
+	msg3: .asciiz "Esses são códigos do meu estudo de assembly.\n"
+	quebraDeLinha: .asciiz "\n"
+.text
+
+.main:
+#exemplo de função de imprimir
+	la $a0, msg1
+	jal imprimeStr
+	
+	la $a0, msg2
+	jal imprimeStr
+	
+	la $a0, msg3
+	jal imprimeStr
+	
+	li $t0, 12
+	li $t1, 5
+	
+	#passagem por parâmetro
+	move $a0, $t0
+	move $a1, $t1
+	jal soma #chama a soma 
+	move $a0, $v0 #move resultado para $a0 para que seja impresso
+	jal imprimeInt
+	
+	la $a0, quebraDeLinha
+	jal imprimeStr
+	
+	#passagem por parâmetro
+	move $a0, $t0
+	move $a1, $t1
+	jal multiplica
+	move $a0, $v0 #move resultado para $a0 para que seja impresso
+	jal imprimeInt
+	
+	j encerra
+
+imprimeStr:
+	li $v0, 4
+	syscall
+	jr $ra #volta para onde foi chamado
+
+imprimeInt:
+	li $v0, 1
+	syscall
+	jr $ra
+#Soma dois inteiros e retorna pelo registrador $v0	
+soma: 
+	add $v0, $a0, $a1
+	jr $ra
+#Multiplica dois inteiros e retorna pelo registrador $v0	
+multiplica:
+	mul $v0, $a0, $a1
+	jr $ra
+#Fim programa	
+encerra:
+	li $v0, 10
+	syscall
+
+	
+	
+	

@@ -1,0 +1,155 @@
+#Algoritmo quicksort em Assembly Mips
+#É válido mencionar que nesse algoritmo temos que iniciar um array na memória RAM para ordenarmos, assim como a informação do seu tamanho
+#Esse exemplo mostra o pior caso, que é quando temos um array decrescente, fazendo com que o algoritmo fique com a complexidade quadrática
+#O caso médio do quicksort tem a complexidade n*log(n), e aparece em casos de um array que esteja completamente aleatório, como o array que está comentado
+#Infelizmente não consegui fazer a contagem do tempo de execução :(
+#Cada linha está comentada  
+#O limite de tamanho do vetor é 8 devido a quantidade de registradores
+
+
+.data
+
+#array: .word 22, 15, 12, 8, 13, 4, 7, 1 
+array: .word 22, 15, 12, 13, 8, 7, 4, 1 
+array_size: .word 8
+
+.text
+
+.main:
+    la $t0, array # Indice do array
+    #Passagem de parametro:
+    addi $a0, $t0, 0 # Carrega o endereço do array em $a0
+    addi $a1, $zero, 0 # Define o índice inicial como 0
+    addi $a2, $zero, 7 # Define o índice final como 7 (último índice do array)
+    jal quicksort # Chama a função quicksort
+
+    # Imprime o vetor ordenado
+    la $t0, array # Indice do array
+    lw $t1, array_size # Carrega o tamanho do array em $t1
+    li $t2, 0 # Inicializa o contador de iteração em 0
+
+print_loop:
+    beq $t2, $t1, exit # Se o índice for igual o tamanho do array, vá para exit
+    
+    # Carrega o valor do elemento atual do array em $a0 e o imprime:
+    lw $a0, 0($t0)
+    li $v0, 1
+    syscall
+    
+    #imprime espaço entre elementos:
+    li $v0, 11
+    li $a0, ' '
+    syscall
+    
+    addi $t0, $t0, 4 # Incrementa o ponteiro do array para o próximo elemento
+    addi $t2, $t2, 1 # Incrementa o contador de iteração
+    j print_loop # Volta para o início do loop
+
+partition:
+    addi $sp, $sp, -16 # Aloca espaço no stack para 4 palavras
+    sw $a0, 0($sp) # Salva $a0 no stack(endereço do array)
+    sw $a1, 4($sp) # Salva $a1 no stack(indice inicial do array)
+    sw $a2, 8($sp) # Salva $a2 no stack(indice final)
+    sw $ra, 12($sp) # Salva $ra no stack(endereço do retorno da função)
+
+    move $s1, $a1 # Armazena indice inicial do array em s1
+    move $s2, $a2 # Armazena índice final do array em s2
+
+    #carregando ultima posição do array em $t2:
+    sll $t1, $s2, 2 # Multiplica $s2 por 4 para acessar o índice correto no array
+    add $t1, $a0, $t1 # Calcula o endereço do elemento $s2
+    lw $t2, 0($t1) # Carrega o valor do elemento $s2 em $t2 (pivô)
+
+    addi $t3, $s1, -1 #Define t3 como indice inicial -1 (i)
+    move $t4, $s1 # Define t4 como índice inicial (j)
+    addi $t5, $s2, -1 # Define t5 como índice final (condição de parada)
+
+forloop:
+    slt $t6, $t5, $t4 # Verifica se o índice inicial j é maior que a condição de parada
+    bne $t6, $zero, endfor #Caso a condição acima seja verdadeia, saia do loop
+
+    sll $t1, $t4, 2 # Multiplica indice inicial por 4 para acessar o índice correto do primeiro elemento do array
+    add $t1, $t1, $a0 # Adiciona o endereço do array
+    lw $t7, 0($t1) # Armazena o elemento da pos t4 em t7
+
+    slt $t8, $t2, $t7 # Verifica se pivô < elemento do vetor
+    bne $t8, $zero, endifloop # Se pivô < elemento do vetor, vai para endfif
+    addi $t3, $t3, 1 # Incrementa indice inicial (i) (só vai rodar se a condição acima for falsa)
+
+    #Passagem de parametros para swap
+    move $a1, $t3 # Move i para $a1
+    move $a2, $t4 # Move j para $a2
+    jal swap # Chama a função swap (i, j)
+
+    addi $t4, $t4, 1 # Incrementa j
+    j forloop # Volta para o início do loop
+
+endifloop:
+    addi $t4, $t4, 1 # Incrementa j
+    j forloop # Volta para o início do loop
+
+endfor:
+    addi $a1, $t3, 1 # Atualiza índice inicial
+    move $a2, $s2 # Atualiza índice final
+    add $v0, $zero, $a1 #Pos i
+    jal swap # Chama a função swap (Coloca o pivô no seu lugar final)
+
+    lw $ra, 12($sp) # Carrega endereço de retorno da função partition
+    addi $sp, $sp, 16 # Libera o espaço alocado no stack
+    jr $ra # Retorna da função partition
+
+quicksort:
+    addi $sp, $sp, -16 # Aloca espaço no stack para 4 variáveis
+    sw $a0, 0($sp) # Salva $a0 no stack (endereço do array)
+    sw $a1, 4($sp) # Salva $a1 no stack (indice inicial do array)
+    sw $a2, 8($sp) # Salva $a2 no stack (indice final)
+    sw $ra, 12($sp) # Salva $ra no stack (endereço do retorno da função)
+
+    move $t0, $a2 # Move $a2 para $t0 (indice final)
+    slt $t1, $a1, $t0 # Verifica se indice final é maior que indice inicial
+    beq $t1, $zero, endif # Se $a1 >= $t0, vai para endif
+
+    jal partition # Chama a função partition
+    move $s0, $v0 # Move retorno de partition para s0 (posição do pivô no array)
+    lw $a1, 4($sp) # Carrega indice inicial em a1
+    addi $a2, $s0, -1 # Define fim como pos do pivô -1
+    jal quicksort # Chama a função quicksort
+
+    addi $a1, $s0, 1 #Define inicio como pos pivô +1
+    lw $a2, 8($sp) # Carrega indice final em a2
+    jal quicksort # Chama a função quicksort
+
+endif:
+    #Pega da stack e coloca nos registradores a
+    lw $a0, 0($sp)
+    lw $a1, 4($sp)
+    lw $a2, 8($sp)
+    lw $ra, 12($sp)
+    addi $sp, $sp, 16 # Libera o espaço alocado no stack
+    jr $ra # Retorna da função quicksort
+    
+swap:
+    addi $sp, $sp, -12 # Aloca espaço no stack para 3 variáveis
+    sw $a0, 0($sp) # Salva $a0 no stack
+    sw $a1, 4($sp) # Salva $a1 no stack
+    sw $a2, 8($sp) # Salva $a2 no stack
+
+    sll $t1, $a1, 2 # Multiplica $a1 por 4 para acessar o índice correto no array
+    add $t1, $a0, $t1 # Calcula o endereço do elemento $a1
+    lw $s3, 0($t1) # Carrega o valor do elemento $a1 em $s3
+
+    sll $t2, $a2, 2 # Multiplica $a2 por 4 para acessar o índice correto no array
+    add $t2, $a0, $t2 # Calcula o endereço do elemento $a2
+    lw $s4, 0($t2) # Carrega o valor do elemento $a2 em $s4
+
+    sw $s4, 0($t1) # Troca os valores dos elementos $a1 e $a2
+    sw $s3, 0($t2) # Troca os valores dos elementos $a1 e $a2
+
+    addi $sp, $sp, 12 # Libera o espaço alocado no stack
+    jr $ra # Retorna da função swap
+
+#encerra o programa
+exit:
+	
+    li $v0, 10
+    syscall

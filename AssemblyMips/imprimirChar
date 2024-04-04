@@ -1,0 +1,29 @@
+.data
+	caracter: .byte 'g' #caracter a ser impresso
+	inteiro: .word 102 #inteiro a ser impresso
+
+.text
+	li $v0, 4 #imprimir char ou string
+	la $a0, caracter #salvar o caracter em a0 com o "la"
+	syscall
+	
+	li $v0, 1 #imprimir imteiro
+	lw $a0, inteiro #salvar o inteiro em a0 com o "lw"
+	syscall
+	
+	#---------SOMA------------
+	li $t1, 32
+	li $t2, 68
+	add $s0, $t1, $t2 #calor de t0 = 100
+	
+	addi $s1, $s0, 12 #valor de t0 = 12
+	
+	#li $v0, 1
+	#lw $a0, $s0
+	#syscall
+	
+	
+	li $v0, 10 #encerrar programa
+	syscall 
+	
+	

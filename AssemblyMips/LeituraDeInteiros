@@ -1,0 +1,26 @@
+.data
+
+	mensagem: .asciiz "Digite sua idade: "
+	saida: .asciiz "Sua idade é "
+.text
+	#imprimir mensagem
+	li $v0, 4
+	la $a0, mensagem
+	syscall
+	
+	li $v0, 5 #leitura de inteiros
+	syscall
+	
+	#o valor fornecido está em v0 e precisamos mover ele para outron registrador
+	move $t0, $v0
+	
+	#imprimir saida
+	li $v0, 4
+	la $a0, saida
+	syscall
+	
+	li $v0, 1
+	move $a0, $t0
+	syscall
+	
+	

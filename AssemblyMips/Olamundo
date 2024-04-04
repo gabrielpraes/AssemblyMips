@@ -1,0 +1,10 @@
+.data
+	#área para dados na memória principal
+	mensagem: .asciiz "Olá Mundo!" #mensagem a ser exibida para o usuário
+.text
+	#área para instruções do programa
+	
+	#instrução para impressão de string
+	li $v0, 4
+	la $a0, mensagem #indicar o endereço que está a mesnagem
+	syscall #faça! 

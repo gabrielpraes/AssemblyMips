@@ -1,0 +1,57 @@
+#Vetores!!!
+#O tamanho do array NUNCA muda.
+#Para armazenar elementos no array, usaremos o Store:
+# sw $s0, MyArray($t0)
+# $s0 terá a primeira posicao do array, e $t0 terá a posicao do array que queremos
+# A posição do elemento depende da quantidade de bytes que cada elemento precisa, por exemplo:
+# Inteiros precisam de 4B, logo, as posições andarão de 4 em 4 (0, 4, 8, 12, ...)
+
+#Para pegar elementos do meu array, usaremos o Load:
+# lw $s0, MyArray($t0)
+# $s0 receberá o valor que está na pos $t0 do array
+
+.data
+    myArray:
+        .align 2 #alinha palavra na posição correta
+        .space 32 #4 espaços de inteiros (16B)
+    quebraDeLinha: .byte '\n'
+
+.text
+    
+.main:
+    #vamos preencher um array de 4 posições com os valores 0, 1, 2, 3, 4, 5, 6, 7;
+    
+    move $t0, $zero #Indice do array
+    move $t1, $zero #Valor que irá para o meu array
+    li $t2, 32 #Tamanho do array
+    jal loop
+    loop:
+    	beq $t0, $t2, fimLoop #Se meu índice for igual ao tamanho do meu array, sair do loop
+	sw $t1, myArray($t0) #colocando valor de $t1 na pos $t0
+	addi $t0, $t0, 4 #atualiza índice
+	addi $t1, $t1, 1 #atualiza valor a ser inserido
+	j loop #volta para o inicio do loop
+
+    fimLoop:
+    	move $t0, $zero #indice
+    	imprimeArray:
+    	    beq $t0, $t2, FimImpressao #Se meu índice for igual ao tamanho do meu array, sair do loop
+    	    #imprime elemento do array
+    	    li $v0, 1
+    	    lw $a0, myArray($t0)
+    	    syscall
+    	    #adiciona espaço entre os elementos
+    	    li $v0, 11
+    	    la $a0, ' '
+    	    syscall
+    	    #atualiza indice
+    	    addi $t0, $t0, 4
+    	    
+    	    j imprimeArray
+    	      
+   	FimImpressao:
+    		
+    	    li $v0, 10 #fim programa
+    	    syscall
+    
+    

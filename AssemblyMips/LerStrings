@@ -1,0 +1,33 @@
+#para ler strings, precisamos de declará-la em .data antes
+
+.data
+	mensagem: .asciiz "Digite o seu nome: "
+	saida: .asciiz "Bem vindo, "
+	#agora iremos declarar nossa variável
+	nome: .space 25 #25 = tamanho máximo
+
+.text
+
+	#imprime mensagem
+	li $v0, 4
+	la $a0, mensagem
+	syscall
+	
+	#leitura do nome
+	li $v0, 8
+	la $a0, nome
+	la $a1, 25
+	syscall
+	
+	#imprime saida
+	li $v0, 4
+	la $a0, saida
+	syscall
+	
+	#imprime nome
+	li $v0, 4
+	la $a0, nome
+	syscall
+	
+	
+	

@@ -1,0 +1,38 @@
+#Exemplo de como funciona um while
+#Basicamente, laços de repetição em assembly mips funciona com expressões condicionais e jumps
+#Quando a condição de saída for verdadeira, sairemos do loop
+#Neste exemplo, vamos ler um número e printaremos todos os números até o número lido.
+
+.data
+	msg: .asciiz "Fim loop"
+	
+.text
+	
+	move $t0, $zero #valor 0 que irá auxiliar no loop
+	
+	li $v0, 5
+	syscall
+	move $t1, $v0 #valor digitado pelo usuário
+	
+while:
+	beq $t0, $t1, saida #quando chegar a 10, saia do loop
+	addi $t0, $t0, 1 #enquanto não sair, adiciona 1 a cada iteração
+	
+	#print numero após soma
+	li $v0, 1
+	move $a0, $t0
+	syscall
+	
+	#print espaço entre os números
+	li $v0, 11 
+	li $a0, ' ' 
+    	syscall 
+	
+	j while
+
+saida: 
+	li $v0, 4
+	la $a0, msg
+	syscall
+	
+	

@@ -1,0 +1,33 @@
+#ler e imprimir float
+.data
+	mensagem: .asciiz "Digite um numero decimal: "
+	saida: .asciiz "O nimero digitado foi "
+	zero: .float 0.0
+	pi: .float 3.1415
+
+.text
+	#imprimindo mensagem
+	li $v0, 4
+	la $a0, mensagem
+	syscall
+	
+	#ler float
+	li $v0, 6
+	syscall
+	#o valor irá para $f0
+	#para imprimir um float, precisamos de mover ele para f12
+	#porem, para mover para f12, precisamos fazer uma operação de soma com zero
+	
+	
+	lwc1 $f1, zero
+	add.s $f12, $f1, $f0
+	
+	#imprimindo saida
+	li $v0, 4
+	la $a0, saida
+	syscall
+	
+	#imprimir float
+	li $v0, 2
+	syscall
+	

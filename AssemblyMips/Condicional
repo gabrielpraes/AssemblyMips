@@ -1,0 +1,63 @@
+#beq $t1, $t2, label (branch if equal)
+#bne $t1, $t2, label (branch if not equal)
+#blt $t1, $t2, label (branch if less than)
+#bgt $t1, $t2, label (branch if greater equal)
+#ble $t1, $t2, label (branch if less or equal)
+#bge $t1, $t2, label (branch if greater or equal)
+
+#para exemplificar, vamos fazer um algoritmo que diz se um número é par ou não
+
+.data
+	msg: .asciiz "Forneça um número: "
+	par: .asciiz "O número é par"
+	impar: .asciiz "O número é ímpar"
+
+.text
+main:
+	#print msg
+	li $v0, 4
+	la $a0, msg
+	syscall
+	
+	#lê inteiro e armazena em t0
+	li $v0, 5
+	syscall
+	move $t0, $v0
+	
+	#divide o numero digitado por 2
+	li $t1, 2
+	div $t0, $t1
+	
+	#pegando valor do resto
+	mfhi $t2
+	
+	#comparando resto com 0
+	beq $t2, $zero, printPar
+	#caso a comparação seja falsa, printImpar:
+	bne $t2, $zero, printImpar
+	
+	
+	#encerra programa
+	li $v0, 10
+	syscall
+	
+printPar:
+	li $v0, 4
+	la $a0, par
+	syscall
+	
+	#fim programa
+	li $v0, 10
+	syscall
+	
+printImpar:
+	li $v0, 4
+	la $a0, impar
+	syscall
+	
+	#fim programa
+	li $v0, 10
+	syscall
+
+
+	

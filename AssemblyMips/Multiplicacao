@@ -1,0 +1,19 @@
+#MULTIPLICAÇÃO
+
+.text
+	li $t0, 12
+	li $t1, 10
+	
+	#s0 terá o resultado da multiplicacao
+	
+	mul $s0, $t0, $t1
+	
+	li $v0, 1
+	move $a0, $s0
+	syscall
+	
+	#multiplicação por potencias de 2 usando shift left
+	#cada shift é igual uma multiplicação por 2, pois estamos movendo todos os bits para a esquerda
+	
+	sll $s1, $t1, 3 #movendo para a esquerda 3 vezes, ou seja, estamos multiplicando por 2^3
+	# 10 * 2^3 = 10 * 8 = 80
