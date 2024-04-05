@@ -1,0 +1,55 @@
+.data
+    array:
+        .align 2
+        .space 16
+        
+    msg: .asciiz "Digite 4 numeros em sequencia: "
+    msg2: .asciiz "Numeros digitados: "
+    
+.text
+.main:
+	
+    move $t0, $zero #index array    
+    li $t1, 16 #tam array
+    
+    loop:
+        beq $t0, $t1, fimLoop
+
+        li $v0, 5 #numero digitado pelo usuário
+        syscall
+        move $t3, $v0 #movendo numero para t3
+    
+        sw $t3, array($t0)
+        addi $t0, $t0, 4
+        j loop
+    
+    fimLoop:
+        move $t0, $zero
+        imprimeArray:
+            beq $t0, $t1, fimImprime
+            li $v0, 1
+            lw $a0, array($t0)
+            syscall
+            
+            li $v0, 11
+            la $a0, ' '
+            syscall
+            
+            addi $t0, $t0, 4
+            j imprimeArray
+            
+        fimImprime:
+            li $v0, 10 #fim programa
+            syscall
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

@@ -9,8 +9,9 @@
 
 .data
 
-#array: .word 22, 15, 12, 8, 13, 4, 7, 1 
-array: .word 22, 15, 12, 13, 8, 7, 4, 1 
+array: .word 22, 15, 13, 8, 12, 4, 7, 1 
+#array: .word 22, 15, 13, 12, 8, 7, 4, 1
+
 array_size: .word 8
 
 .text
@@ -110,6 +111,7 @@ quicksort:
     beq $t1, $zero, endif # Se $a1 >= $t0, vai para endif
 
     jal partition # Chama a função partition
+    
     move $s0, $v0 # Move retorno de partition para s0 (posição do pivô no array)
     lw $a1, 4($sp) # Carrega indice inicial em a1
     addi $a2, $s0, -1 # Define fim como pos do pivô -1
